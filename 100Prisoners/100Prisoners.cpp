@@ -10,7 +10,7 @@
 #include <fstream>
 #include <string>
 
-unsigned totalNumberOfSimulations = 10;
+unsigned totalNumberOfSimulations = 100;
 unsigned int totalNumberOfPrisoners = 100;
 unsigned int limitToCheck = 50;
 std::map<int, int> boxes;
@@ -46,7 +46,7 @@ void createBoxes() {
 
 	std::random_shuffle(arrayToShuffle.begin(), arrayToShuffle.end(), Random::GenerateRandom);
 
-
+	// Assign randomly placed numbers to boxes.
 	for (unsigned int i = 0; i < totalNumberOfPrisoners; i++)
 	{
 		boxes[i] = arrayToShuffle[i];
