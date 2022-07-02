@@ -17,9 +17,9 @@ int limitToCheck = 50;
 std::map<int, int> boxes;
 std::vector<int> checks;
 bool enableLog = false;
-std::string base_directory = "simulation";
+std::string base_directory = "";
 std::string checkLogs = "";
-
+std::string now_string = "";
 
 struct  SimulationResult {
 	float lessThanLimitPercentage;
@@ -95,14 +95,14 @@ void writeBoxToFile(int simulation, std::string results) {
 }
 
 void writeResultsToFile(std::string results) {
-	std::ofstream ResultFile("results.csv");
+	std::ofstream ResultFile(base_directory + "/results.csv");
 	ResultFile << "Simulation\tSuccess\tMore Than Limit\tLess Than Limit\n";
 	ResultFile << results;
 	ResultFile.close();
 }
 
 void writeChecksToFile() {
-	std::ofstream ResultFile("checks.csv");
+	std::ofstream ResultFile(base_directory + "/checks.csv");
 	ResultFile << "Simulation\tCheck Number\tPrisoner\tBox Number\tBox Value\n";
 	ResultFile << checkLogs;
 	ResultFile.close();
@@ -110,8 +110,12 @@ void writeChecksToFile() {
 
 int main()
 {
+	// Get current date and time
+	const auto now = std::chrono::system_clock::now();
+	now_string = std::format("{:%d-%m-%Y-%H_%M_%OS}", now);
 
-	std::filesystem::create_directory(base_directory);
+	base_directory = "output/simulation-" + now_string;
+	std::filesystem::create_directories(base_directory);
 
 	/// <summary>
 	/// Run simulations
