@@ -31,7 +31,11 @@ void log(std::string output) {
 	}
 }
 
-
+/// <summary>
+/// First create a simple array that contains only numbers.
+/// Shuffle the array
+/// Assign shuffled numbers to the "boxes" map, thus, boxes will have random numbers.
+/// </summary>
 void createBoxes() {
 	std::vector<unsigned int> arrayToShuffle;
 
@@ -50,18 +54,23 @@ void createBoxes() {
 }
 
 void openBox(int prisonerNumber, int boxNumber, int checkCount) {
-	
+	// If checks in a loop reach to the limit
 	if (checkCount > limitToCheck) {
 		log("LIMIT REACHED.\n");
 	}
 	
+	// Go to box and open it
 	int boxValue = boxes[boxNumber];
 	log(std::to_string(checkCount) + ". Check: Prisoner " + std::to_string(prisonerNumber) + " checking box " + std::to_string(boxNumber) + " box value:" + std::to_string(boxValue) + "\n");
+	
+	// If the number inside the box equals to the prisoner number, close the loop.
 	if (boxValue == prisonerNumber) {
 		log("Prisoner " + std::to_string(prisonerNumber) + " found his number at Box " + std::to_string(boxNumber) + ". Total Checks: " + std::to_string(checkCount) + ". Box value:" + std::to_string(boxValue) + "\n");
 		checks.push_back(checkCount);
 	}
 	else {
+		// Run the loop until the prioner finds their own number.
+		// Increase the number of checks.
 		return openBox(prisonerNumber, boxValue, checkCount + 1);
 	}
 }
@@ -75,19 +84,31 @@ void writeResultsToFile(std::string results) {
 
 int main()
 {
+	/// <summary>
+	/// Run simulations
+	/// </summary>
+	/// <returns></returns>
 	for (size_t simulationNumber = 0; simulationNumber < totalNumberOfSimulations; simulationNumber++)
 	{
+		// Create boxes and randomize
 		createBoxes();
+
+		// Tell each prisoner to open a box until they found their own number in the box.
 		for (unsigned int prisoner = 0; prisoner < totalNumberOfPrisoners; prisoner++)
 		{
+			// Prisoner will open the first box numbered with their own number.
+			// Check count will be 1 for the beginning
 			openBox(prisoner, prisoner, 1);
-
 		}
+
 
 		int checksMoreThanLimit = 0;
 		int checksLessThanLimit = 0;
 		int sizeOfChecks = checks.size();
 		bool prisonerFreedSuccess = true;
+		
+		// If a single prisoner passes the limit,
+		// Simulation result will be FALSE, means no prisoners to be freed.
 		for (size_t i = 0; i < sizeOfChecks; i++)
 		{
 			int c = checks[i];
@@ -100,19 +121,25 @@ int main()
 			}
 		}
 
+		// Find the percentage of chekcs that reaches to limit and stay under the limit.
 		float pMoreThanLimit = 100 * checksMoreThanLimit / sizeOfChecks;
 		float pLessThanLimit = 100 * checksLessThanLimit / sizeOfChecks;
 
+		// Create a struct at the end of each simulation
 		SimulationResult s;
 		s.lessThanLimitPercentage = pLessThanLimit;
 		s.moreThanLimitPercentage = pMoreThanLimit;
 		s.success = prisonerFreedSuccess;
 		results[simulationNumber] = s;
 
+		// Clear the checks for the new/next simulation.
 		checks.clear();
+
 		log(simulationNumber + ". simulation ended. Failed prisoners:%" + std::to_string(pMoreThanLimit) + ", Succeed Prisoners:%" + std::to_string(pLessThanLimit) + "\n");
 	}
 
+
+	// Find the success rate of simulations
 	int simulationFailed = 0;
 	int simulationSucceed = 0;
 	std::string resultLine = "";
@@ -129,6 +156,8 @@ int main()
 		resultLine += std::to_string(i) + "\t" + (r.success ? "true" : "false") + "\t" + std::to_string(r.moreThanLimitPercentage) + "\t" + std::to_string(r.lessThanLimitPercentage) + "\n";
 	}
 
+
+	// Write the results to a file.
 	writeResultsToFile(resultLine);
 
 
